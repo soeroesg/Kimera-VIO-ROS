@@ -3,7 +3,7 @@
   <arg name="verbosity"    default="0" />
 
   <!-- Set online to true if you use rosbag play or sensor stream -->
-  <arg name="online" default="true" />
+  <arg name="online" default="false" />
   <!-- Set use_sim_time to true if you use rosbag with clock argument -->
   <param name="use_sim_time" value="true"/>
   <!-- Set log_output to true and SparkVio will log output of all modules to
@@ -22,13 +22,18 @@
   <arg name="use_online_cam_params" value="false"/>
 
   <!-- Change rosbag path if online argument is false -->
-  <arg name="rosbag_path" default="/home/esoptron/dev/Catkin/Kimera/resources/V1_01_easy.bag"
+  <arg name="rosbag_path" default="/home/esoptron/dev/Catkin/Kimera/resources/20200604/t265_testbag_center.bag"
     unless="$(arg online)"/>
 
   <!-- Frame IDs -->
   <arg name="base_link_frame_id" value="base_link"/>
-  <arg name="left_cam_frame_id"  value="cam0"/>
-  <arg name="right_cam_frame_id" value="cam1"/>
+  <arg name="left_cam_frame_id"  value="/camera/fisheye1"/>
+  <arg name="right_cam_frame_id" value="/camera/fisheye2"/>
+
+  <!-- Subscribed Topics -->
+  <arg name="left_cam_topic"                    default="/camera/fisheye1/image_raw"/>
+  <arg name="right_cam_topic"                   default="/camera/fisheye2/image_raw"/>
+  <arg name="imu_topic"                         default="/camera/accel/sample"/>
 
   <!-- Perform stereo dense reconstruction? -->
   <arg name="run_stereo_dense"     default="true"/>
@@ -36,10 +41,10 @@
     <!-- StereoSGBM -->
     <node name="dense_stereo" pkg="image_undistort" type="dense_stereo_node" >
       <param name="input_camera_info_from_ros_params" value="true"/>
-      <param name="first_camera_namespace"  value="cam0"/>
-      <param name="second_camera_namespace" value="cam1"/>
-      <param name="first_output_frame"      value="cam0"/>
-      <param name="second_output_frame"     value="cam1"/>
+      <param name="first_camera_namespace"  value="/camera/fisheye1"/>
+      <param name="second_camera_namespace" value="/camera/fisheye2"/>
+      <param name="first_output_frame"      value="/camera/fisheye1"/>
+      <param name="second_output_frame"     value="/camera/fisheye2"/>
 
       <param name="depth/use_sgbm"          value="true"/>
       <param name="depth/do_median_blur"    value="false"/>
@@ -49,12 +54,12 @@
       <param name="process_every_nth_frame" value="1"/>
       <param name="publish_tf"              value="false"/>
 
-      <rosparam file="$(find kimera_vio_ros)/cfg/calib/euroc_camchain.yaml"/>
+      <rosparam file="$(find kimera_vio_ros)/cfg/calib/t265_camchain.yaml"/>
 
-      <remap from="raw/first/image"         to="/cam0/image_raw"/>
-      <remap from="raw/second/image"        to="/cam1/image_raw"/>
-      <remap from="raw/first/camera_info"   to="/cam0/camera_info"/>
-      <remap from="raw/second/camera_info"  to="/cam1/camera_info"/>
+      <remap from="raw/first/image"         to="/camera/fisheye1/image_raw"/>
+      <remap from="raw/second/image"        to="/camera/fisheye2/image_raw"/>
+      <remap from="raw/first/camera_info"   to="/camera/fisheye1/camera_info"/>
+      <remap from="raw/second/camera_info"  to="/camera/fisheye2/camera_info"/>
     </node>
   </group>
 

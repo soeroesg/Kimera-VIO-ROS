@@ -26,7 +26,7 @@
   <!-- Subscribed Topics -->
   <arg name="left_cam_topic"  value="/camera/infra1/image_rect_raw"/>
   <arg name="right_cam_topic" value="/camera/infra2/image_rect_raw"/>
-  <arg name="imu_topic"       value="/camera/imu"/>
+  <arg name="imu_topic"       value="/camera/imu"/>cd
 
   <!-- Launch actual pipeline -->
   <include file="$(find kimera_vio_ros)/launch/kimera_vio_ros.launch"
@@ -34,6 +34,8 @@
 
  <!-- Launch static TF node from base_link to velo_link -->
  <node pkg="tf" type="static_transform_publisher" name="velo_link_broadcaster"
-   args="0 0 0 0 0 0 1 base_link velo_link 100"/>
+   args="0 0 0 0 0 0 1 base_link camera_link 100"/>
+
+
 
 </launch>
